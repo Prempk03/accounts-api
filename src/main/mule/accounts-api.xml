@@ -3,7 +3,7 @@
     <http:listener-config name="accounts-api-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="8081" />
     </http:listener-config>
-    <apikit:config name="accounts-api-config" api="resource::6ae4fcc5-1db7-4200-b774-52857b67717a:accounts-api:1.0.0:raml:zip:accounts-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    <apikit:config name="accounts-api-config" api="resource::6ae4fcc5-1db7-4200-b774-52857b67717a:accounts-api:1.0.1:raml:zip:accounts-api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
     <flow name="accounts-api-main">
         <http:listener config-ref="accounts-api-httpListenerConfig" path="/api/*">
             <http:response statusCode="#[vars.httpStatus default 200]">
@@ -124,7 +124,7 @@ output application/json
         </error-handler>
     </flow>
     <flow name="post:\accounts:application\json:accounts-api-config">
-        <ee:transform doc:name="Transform Message">
+		<ee:transform doc:name="Transform Message">
             <ee:message>
                 <ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -132,7 +132,22 @@ output application/json
 {
   accountid: "1234",
   status: "account created successfully"
-} ]]></ee:set-payload>
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+    <flow name="put:\accounts:application\json:accounts-api-config">
+        <logger level="INFO" doc:name="Logger" doc:id="45cc67b8-3062-4e3f-921f-3ed2afdab663" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger" doc:id="5ef45ede-25ff-4f93-a963-b0dd48426426" message="updated"/>
+		<ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  accountid: "1234",
+  status: "account updated successfully"
+}]]></ee:set-payload>
             </ee:message>
         </ee:transform>
     </flow>
